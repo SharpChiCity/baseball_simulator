@@ -1,16 +1,17 @@
 import innings
 
 class Game:
-    def __init__(self, home_team, away_team, inning = 1, late_inning_base_change=None):
+    def __init__(self, home_team, away_team, late_inning_base_change=None):
         self.home_team = home_team
         self.away_team = away_team
         self.bottom_of_inning = True  # starting at True because program flips at the top of the inning
-        self.inning = inning - 1
+        self.inning = 1
         self.winning_team = None
         self.late_inning_default = {1:0, 2:2, 3:0}
         self.late_inning_base_change = late_inning_base_change
     
     def _check_end_game(self):
+        """ Check if the score and inning indicate the game is over"""
         if self.inning > 8:
             if self.bottom_of_inning:
                 if self.away_team.runs > self.home_team.runs:
@@ -30,11 +31,13 @@ class Game:
             return True
         
     def _show_score(self):
+        """ print the score """
         print('{}: {} - {}: {}'.format(
             self.away_team.name, self.away_team.runs, 
             self.home_team.name, self.home_team.runs))
 
     def _check_if_late_inning(self):
+        """ Check if a game is beyond the user supplied inning of when a runner begins an inning on 2nd base"""
         if self.inning >= (self.late_inning_base_change or 0) and self.late_inning_base_change:
             # print('starting with runners on ', self.late_inning_default)
             return self.late_inning_default
@@ -43,6 +46,7 @@ class Game:
             return False
     
     def _play_half_inning(self, use_late_inning_default=None):
+        """ Simulate a half inning """
         pitching_team = self.away_team if self.bottom_of_inning else self.home_team
         batting_team = self.home_team if self.bottom_of_inning else self.away_team
         # print(batting_team.name, 'is up to bat!')
@@ -70,6 +74,7 @@ class Game:
         
 
     def play_game(self):
+        """ Play an entire game until one team wins """
         while self._check_end_game():
             # print()
             self.bottom_of_inning = not self.bottom_of_inning

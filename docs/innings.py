@@ -32,6 +32,7 @@ class Inning:
                 
     @staticmethod
     def clean_base_state(list_of_base_state):
+        """ Return a more easily digestible version of the base state. Convert a map to string"""
         bases = {1:0,2:0,3:0}
         for i in list_of_base_state:
             if i in bases.keys():
@@ -39,10 +40,12 @@ class Inning:
         return bases
 
     def _change_lg_avg_stats(self, dampening):
+        """ Change default statistics by +/-dampening% """
         self.lg_avg_stats, self.lg_avg_stats_extra = gen_offensive_outcome_probabilities(dampening)
 
 
     def _show_base_out_situation(self):
+        """ Helper function if user wants to see baseout state during simulation"""
         b = ''.join([str(i) for i in self.base_state.values()])
         print(b, ' '*5, {i:j for ij in self.__dict__.items() if i in ['outs']},
              ' and the score is ', 
@@ -50,6 +53,8 @@ class Inning:
               '{}:'.format(self.pitching_team.name), self.pitching_team.runs)
     
     def _update_base_state(self, outcome):
+        """ Change base state based on the outcome of an at bat """
+        # TODO: This is an overly complex method of updating base states. This can be similified in future
         outcome_raw = outcome
         outcome = self.hit_mapping[outcome]
         
@@ -123,9 +128,11 @@ class Inning:
         self.base_state = end_state
 
     def _score_runs(self, team):
+        """ Add a run to a teams score """
         team.runs += 1
 
     def _update_out_state(self, outcome):
+        """ Update the number of outs in an inning """
         self.outs = self.outs + self.out_mapping[outcome]
 
     def gen_at_bat_outcome(self, show_outcome=False):
